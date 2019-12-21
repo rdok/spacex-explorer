@@ -1,0 +1,1 @@
+alias workbench='docker-compose --project-directory `pwd` -f docker/docker-compose.yml'

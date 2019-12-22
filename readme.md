@@ -15,3 +15,4 @@ workbench exec php php artisan migrate --env=testing
 ```
 workbench exec php ./vendor/bin/phpunit
 ```
+

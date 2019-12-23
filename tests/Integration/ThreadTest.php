@@ -8,9 +8,8 @@ use Illuminate\Support\Arr;
 
 class ThreadTest extends IntegrationTestCase {
 
-
    /** @test */
-   function should_have_fields() {
+   function should_have_model_fields() {
       $data = [
          'author_id' => factory(User::class)->create()->id,
          'title' => 'Threadtitle',

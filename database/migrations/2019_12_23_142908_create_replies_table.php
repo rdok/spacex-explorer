@@ -20,7 +20,7 @@ class CreateRepliesTable extends Migration
          $table->foreign('author_id')->references('id')->on('users');
          $table->unsignedBigInteger('thread_id');
          $table->foreign('thread_id')->references('id')->on('threads');
-         $table->string('value');
+         $table->string('body');
       });
    }
 

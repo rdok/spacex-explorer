@@ -5,12 +5,12 @@ function docker-compose-app() {
       $@
 }
 
-function workbench() {
+function php() {
     docker-compose \
       --project-directory `pwd` \
       --file docker/docker-compose.yml \
       exec --user `id -u`:`id -g` \
-      php $@
+      php php $@
 }
 
 function mysql() {

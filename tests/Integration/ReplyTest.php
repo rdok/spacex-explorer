@@ -14,12 +14,12 @@ class ReplyTest extends IntegrationTestCase {
       $data = [
          'author_id' => factory(User::class)->create()->id,
          'thread_id' => factory(Thread::class)->create()->id,
-         'value' => 'ReplyValue',
+         'body' => 'ReplyValue',
       ];
 
       $this->assertDatabaseMissing('replies', $data);
 
-      $thread = new Reply(Arr::only($data, ['value']));
+      $thread = new Reply(Arr::only($data, ['body']));
       $thread->author()->associate($data['author_id']);
       $thread->thread()->associate($data['thread_id']);
       $thread->save();

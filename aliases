@@ -2,7 +2,7 @@ function docker-compose-app() {
     docker-compose \
       --project-directory `pwd` \
       --file docker/docker-compose.yml \
-      $@
+      "$@"
 }
 
 function php() {
@@ -10,7 +10,7 @@ function php() {
       --project-directory `pwd` \
       --file docker/docker-compose.yml \
       exec --user `id -u`:`id -g` \
-      php php $@
+      php php "$@"
 }
 
 function mysql() {
@@ -18,5 +18,5 @@ function mysql() {
       --project-directory `pwd` \
       --file docker/docker-compose.yml \
       exec --user `id -u`:`id -g` \
-      db mysql $@
+      db mysql "$@"
 }

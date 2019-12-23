@@ -1,16 +1,21 @@
 pipeline {
     agent { label "linux" }
     options {  
-       buildDiscarder( logRotator( numToKeepStr: '5' ) ) 
+       buildDiscarder( logRotator( numToKeepStr: '13' ) ) 
        disableConcurrentBuilds()
     }
     triggers { 
        githubPush() 
        cron('H H(18-19) * * *') 
     }
+    environment { 
+       DB_DATABASE = 'test'
+       DB_HOST = 'db'
+       DB_PASSWORD = 'secret'
+    }
     stages {
-      stage('PR Status: Pending') {
-        steps {
+      stage('Build') {
+         steps {
             githubNotify account: 'rdok',
                context: 'CI',
                credentialsId: 'status-check-github-token',
@@ -18,19 +23,28 @@ pipeline {
                repo: 'spacex-explorer',
                sha: "${env.GIT_COMMIT}",
                status: 'PENDING'
-        }
+
+            sh '''#!/bin/bash
+               set -e
+               source aliases
+               docker-compose-app up -d
+               docker-compose-app exec -u `id -u`:`id -g` -T php sh -c '
+                  composer install
+                  ./docker/wait-for-it.sh "db:3306"
+                  php artisan migrate --env=testing
+               '
+            '''
+         }
       }
       stage('Test') {
          steps {
-            ansiColor('xterm') {
-               sh '''#!/bin/bash
-                  source ./aliases
-                  docker-compose-app up -d
-                  workbench exec php php artisan migrate --env=testing
-                  workbench exec php ./vendor/bin/phpunit
-                  docker-compose-app down -v --remove-orphans
-               '''
-            } 
+            sh '''#!/bin/bash
+               set -e
+               source aliases
+
+               docker-compose-app exec -u `id -u`:`id -g` -T php \
+                  ./vendor/bin/phpunit --testdox-html testdox/index.html
+            '''
          }
       }
     }
@@ -52,6 +66,22 @@ pipeline {
                repo: 'spacex-explorer',
                sha: "${env.GIT_COMMIT}",
                status: 'SUCCESS'
+        }
+        always {
+           publishHTML([
+               allowMissing: false,
+               alwaysLinkToLastBuild: true,
+               keepAll: false,
+               reportDir: 'testdox',
+               reportFiles: 'index.html',
+               reportName: 'Test',
+               reportTitles: ''
+           ])
+           sh '''#!/bin/bash
+              set -e
+              source aliases
+              docker-compose-app down -v
+           '''
         }
     }
 }

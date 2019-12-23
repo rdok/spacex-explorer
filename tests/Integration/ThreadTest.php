@@ -3,6 +3,7 @@
 namespace Tests\Integration;
 
 use App\User;
+use App\Reply;
 use App\Thread;
 use Illuminate\Support\Arr;
 
@@ -23,5 +24,18 @@ class ThreadTest extends IntegrationTestCase {
       $thread->save();
 
       $this->assertDatabaseHas('threads', $data);
+   }
+
+   /** @test */
+   function it_should_have_many_replies() {
+      $thread = factory(Thread::class)->create();
+
+      $replies = factory(Reply::class)
+         ->create(['thread_id' => $thread->id]);
+
+      $this->assertEquals(
+         $replies->pluck('id'),
+         $thread->replies()->pluck('id')
+      );
    }
 }

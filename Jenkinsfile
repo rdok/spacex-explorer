@@ -1,6 +1,9 @@
 pipeline {
     agent { label "linux" }
-    options {  buildDiscarder( logRotator( numToKeepStr: '5' ) ) }
+    options {  
+       buildDiscarder( logRotator( numToKeepStr: '5' ) ) 
+       disableConcurrentBuilds()
+    }
     triggers { 
        githubPush() 
        cron('H H(18-19) * * *') 

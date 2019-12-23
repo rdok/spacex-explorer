@@ -1,12 +1,15 @@
 pipeline {
     agent { label "linux" }
-    options {  buildDiscarder( logRotator( numToKeepStr: '5' ) ) }
+    options {  
+       buildDiscarder( logRotator( numToKeepStr: '5' ) ) 
+       disableConcurrentBuilds()
+    }
     triggers { 
        githubPush() 
        cron('H H(18-19) * * *') 
     }
     stages {
-      stage('Status:Pending') {
+      stage('PR Status: Pending') {
         steps {
             githubNotify account: 'rdok',
                context: 'CI',
@@ -22,10 +25,10 @@ pipeline {
             ansiColor('xterm') {
                sh '''#!/bin/bash
                   source ./aliases
-                  workbench up -d
+                  docker-compose-app up -d
                   workbench exec php php artisan migrate --env=testing
                   workbench exec php ./vendor/bin/phpunit
-                  workbench down -v --remove-orphans
+                  docker-compose-app down -v --remove-orphans
                '''
             } 
          }

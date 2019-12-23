@@ -1,18 +1,17 @@
 ### Development
-> Source aliases to create an alias for the docker-compose. 
+> Source aliases. `source aliases`
 >
 Only depedency: docker & docker-compose
 
-##### Workbench
+##### Examples
 ```
-workbench up -d 
-
-workbench exec php php artisan migrate
-workbench exec php php artisan migrate --env=testing
+docker-compose-app up -d
+workbench exec php artisan migrate
+workbench exec php artisan migrate --env=testing
 ```
 
 **Test**
 ```
-workbench exec php ./vendor/bin/phpunit
+workbench php ./vendor/bin/phpunit
 ```
 

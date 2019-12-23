@@ -1,6 +1,22 @@
+function docker-compose-app() {
+    docker-compose \
+      --project-directory `pwd` \
+      --file docker/docker-compose.yml \
+      $@
+}
+
 function workbench() {
     docker-compose \
       --project-directory `pwd` \
-      -f docker/docker-compose.yml \
-      "$@"
+      --file docker/docker-compose.yml \
+      exec --user `id -u`:`id -g` \
+      php $@
+}
+
+function mysql() {
+    docker-compose \
+      --project-directory `pwd` \
+      --file docker/docker-compose.yml \
+      exec --user `id -u`:`id -g` \
+      db mysql $@
 }

@@ -5,6 +5,14 @@ function docker-compose-app() {
       "$@"
 }
 
+function docker-compose-local() {
+    docker-compose \
+      --project-directory `pwd` \
+      --file docker/docker-compose.yml \
+      --file docker/docker-compose.local.yml \
+      "$@"
+}
+
 function php() {
     docker-compose \
       --project-directory `pwd` \

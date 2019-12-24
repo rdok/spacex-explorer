@@ -1,7 +1,8 @@
 [![Build Status](https://jenkins.rdok.dev/buildStatus/icon?job=spacex-explorer%2Fstatus-check)](https://jenkins.rdok.dev/job/spacex-explorer/job/status-check/)
 
 ### Development
-Only depedency: docker & docker-compose
+Only depedency docker & docker-compose
+
 
 ##### Usage
 ```
@@ -9,7 +10,8 @@ Only depedency: docker & docker-compose
 cp .env.example .env 
 
 source aliases
-docker-compose-app up -d
+docker-compose-app build
+docker-compose-local up -d
 
 # These aliases connect to the php & db docker services
 php artisan migrate

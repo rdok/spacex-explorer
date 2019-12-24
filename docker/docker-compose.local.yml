@@ -5,7 +5,13 @@ services:
   php:
       build:
          context: .
-         dockerfile: ./docker/php/Dockerfile
+         dockerfile: ./docker/php/local.Dockerfile
+         args:
+           UID: $DEV_UID
+      volumes:
+        - .:/var/www:rw
+        - ./storage:/var/www/storage:rw
+        - ./docker/php/php.ini:/usr/local/etc/php/php.ini
 
   db:
       image: mysql:5.7

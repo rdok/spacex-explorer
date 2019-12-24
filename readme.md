@@ -3,10 +3,12 @@
 ### Development
 Only depedency: docker & docker-compose
 
-##### Examples
+##### Usage
 ```
-source aliases
+# If your `id -u` is other than 1000 you'll need to update DEV_UID
+cp .env.example .env 
 
+source aliases
 docker-compose-app up -d
 
 # These aliases connect to the php & db docker services

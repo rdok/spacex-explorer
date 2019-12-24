@@ -13,6 +13,14 @@ function php() {
       php php "$@"
 }
 
+function composer() {
+    docker-compose \
+      --project-directory `pwd` \
+      --file docker/docker-compose.yml \
+      exec --user `id -u`:`id -g` \
+      php composer "$@"
+}
+
 function mysql() {
     docker-compose \
       --project-directory `pwd` \

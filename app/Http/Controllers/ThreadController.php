@@ -14,7 +14,9 @@ class ThreadController extends Controller
      */
     public function index()
     {
-        //
+       $threads =  Thread::query()->get();
+
+       return view('threads.index', compact('threads'));
     }
 
     /**

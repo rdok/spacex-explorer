@@ -12,6 +12,8 @@ pipeline {
        DB_DATABASE = 'test'
        DB_HOST = 'db'
        DB_PASSWORD = 'secret'
+       DEV_UID = sh(returnStdout: true, script: "id -u").trim()
+       DEV_APP_PORT=3000
     }
     stages {
       stage('Build') {

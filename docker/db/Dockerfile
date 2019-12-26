@@ -1,5 +1,4 @@
-FROM php:7.3-fpm-alpine3.9
+FROM mysql:5.7
 
-RUN apk add --no-cache composer \
-      && docker-php-ext-install pdo_mysql
+COPY ./docker/db/entrypoint/ /docker-entrypoint-initdb.d/
 

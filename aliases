@@ -1,6 +1,7 @@
 function docker-compose-app() {
     docker-compose \
       --project-directory `pwd` \
+      --project-name 'spacex-explorer' \
       --file docker/docker-compose.yml \
       "$@"
 }
@@ -8,6 +9,7 @@ function docker-compose-app() {
 function docker-compose-local() {
     docker-compose \
       --project-directory `pwd` \
+      --project-name 'spacex-explorer' \
       --file docker/docker-compose.yml \
       --file docker/docker-compose.local.yml \
       "$@"
@@ -16,6 +18,7 @@ function docker-compose-local() {
 function php() {
     docker-compose \
       --project-directory `pwd` \
+      --project-name 'spacex-explorer' \
       --file docker/docker-compose.yml \
       exec --user `id -u`:`id -g` \
       php php "$@"
@@ -24,6 +27,7 @@ function php() {
 function composer() {
     docker-compose \
       --project-directory `pwd` \
+      --project-name 'spacex-explorer' \
       --file docker/docker-compose.yml \
       exec --user `id -u`:`id -g` \
       php composer "$@"
@@ -32,6 +36,7 @@ function composer() {
 function mysql() {
     docker-compose \
       --project-directory `pwd` \
+      --project-name 'spacex-explorer' \
       --file docker/docker-compose.yml \
       exec --user `id -u`:`id -g` \
       db mysql "$@"

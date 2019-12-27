@@ -7,6 +7,7 @@ COPY ./docker/php/php.ini /usr/local/etc/php/php.ini
 
 COPY ./docker/wait-for /wait-for
 RUN chmod +x /wait-for
+WORKDIR /var/www
 
 #COPY --chown=www-data:www-data . /var/www
 

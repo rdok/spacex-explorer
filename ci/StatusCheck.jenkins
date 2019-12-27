@@ -1,6 +1,6 @@
 pipeline {
     agent { label "linux" }
-    options { buildDiscarder( logRotator( numToKeepStr: '20' ) ) }
+    options { buildDiscarder( logRotator( numToKeepStr: '100' ) ) }
     triggers { githubPush() }
     parameters {
         string(
@@ -23,28 +23,28 @@ pipeline {
                 sh"""#!/bin/bash -xe
                     cp .env.testing .env
                     docker-compose \
-                        --project-directory . \
+                        --project-directory "${env.WORKSPACE}" \
                         --project-name "${env.PROJECT_NAME}" \
                         --file docker/docker-compose.yml \
                         up -d db
                     docker-compose \
-                        --project-directory . \
+                        --project-directory "${env.WORKSPACE}" \
                         --project-name "${env.PROJECT_NAME}" \
                         --file docker/docker-compose.yml \
-                        build php
+                        build
 
                     docker-compose \
-                        --project-directory . \
+                        --project-directory "${env.WORKSPACE}" \
                         --project-name "${env.PROJECT_NAME}" \
                         --file docker/docker-compose.yml \
-                        run -v "${env.WORKSPACE}":/var/www -w /var/www php \
+                        run -v "${env.WORKSPACE}":/var/www php \
                         composer install
 
                     docker-compose \
-                        --project-directory . \
+                        --project-directory "${env.WORKSPACE}" \
                         --project-name "${env.PROJECT_NAME}" \
                         --file docker/docker-compose.yml \
-                        run -v "${env.WORKSPACE}":/var/www -w /var/www php \
+                        run -v "${env.WORKSPACE}":/var/www php \
                         php artisan migrate --env=testing
                 """
             }
@@ -58,7 +58,7 @@ pipeline {
                         --project-name "${env.PROJECT_NAME}" \
                         --file docker/docker-compose.yml \
                         run -v "${env.WORKSPACE}":/var/www -w /var/www \
-                        php ./vendor/bin/phpunit
+                        php ./vendor/bin/phpunit --testdox-html testdox/index.html
                 """
             }
         }
@@ -86,11 +86,20 @@ pipeline {
         always {
             sh"""#!/bin/bash -xe
                 docker-compose \
-                    --project-directory . \
+                    --project-directory "${env.WORKSPACE}" \
                     --project-name "${env.PROJECT_NAME}" \
                     --file docker/docker-compose.yml \
                     down -v --remove-orphans
             """
+            publishHTML([
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: false,
+                reportDir: 'testdox',
+                reportFiles: 'index.html',
+                reportName: 'Tests Report',
+                reportTitles: ''
+            ])
         }
     }
 }

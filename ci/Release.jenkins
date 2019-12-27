@@ -1,19 +1,12 @@
 pipeline {
-    agent { label "linux" }
-    options { buildDiscarder( logRotator( numToKeepStr: '100' ) ) }
+    agent { label "rdok.dev" }
+    options { buildDiscarder( logRotator( numToKeepStr: '5' ) ) }
     triggers { githubPush() }
-    parameters {
-        string(
-            name: 'PROJECT_NAME',
-            defaultValue: "${env.BUILD_TAG}",
-            description: 'For docker-compose.'
-        )
-    }
     stages {
-        stage('Build & Start') {
+        stage('Build') {
             steps {
                 githubNotify account: 'rdok',
-                    context: 'Status Check',
+                    context: 'Release',
                     credentialsId: 'status-check-github-token',
                     description: 'Jenkins',
                     repo: 'spacex-explorer',
@@ -67,7 +60,7 @@ pipeline {
     post {
         failure {
             githubNotify account: 'rdok',
-               context: 'Status Check',
+               context: 'Release',
                credentialsId: 'status-check-github-token',
                description: 'Jenkins',
                repo: 'spacex-explorer',
@@ -76,7 +69,7 @@ pipeline {
         }
         success {
             githubNotify account: 'rdok',
-               context: 'Status Check',
+               context: 'Release',
                credentialsId: 'status-check-github-token',
                description: 'Jenkins',
                repo: 'spacex-explorer',

@@ -11,6 +11,8 @@ class ThreadsTest extends FeatureTestCase
    /** @test */
    public function testBasicTest()
    {
+       $this->markTestIncomplete();
+
       $threads = factory(Thread::class, 2)->create();
 
       $response = $this->get('/threads');

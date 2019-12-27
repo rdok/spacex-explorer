@@ -1,22 +1,22 @@
-[![Build Status](https://jenkins.rdok.dev/buildStatus/icon?job=spacex-explorer%2Fstatus-check)](https://jenkins.rdok.dev/job/spacex-explorer/job/status-check/)
-
 ### Development
-Only depedency: docker & docker-compose
+Only dependency docker & docker-compose
 
-##### Examples
+##### Usage
 ```
-source aliases
+# If your `id -u` is other than 1000 you'll need to update DEV_UID
+cp .env.example .env 
 
-docker-compose-app up -d
+source aliases
+docker_compose_local up -d
 
 # These aliases connect to the php & db docker services
 php artisan migrate
-php artisan migrate --env=testing
 mysql -uroot -psecret
 ```
 
 **Test**
 ```
+php artisan migrate --env=testing
 php ./vendor/bin/phpunit
 ```
 

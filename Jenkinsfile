@@ -1,20 +1,17 @@
 pipeline {
     agent { label "linux" }
-    options {  
-       buildDiscarder( logRotator( numToKeepStr: '13' ) ) 
+    options {
+       buildDiscarder( logRotator( numToKeepStr: '13' ) )
        disableConcurrentBuilds()
     }
-    triggers { 
-       githubPush() 
-       cron('H H(18-19) * * *') 
+    triggers {
+       githubPush()
     }
-    environment { 
-       DB_DATABASE = 'test'
-       DB_HOST = 'db'
-       DB_PASSWORD = 'secret'
+    environment {
+       DEV_UID = sh(returnStdout: true, script: "id -u").trim()
     }
     stages {
-      stage('Build') {
+      stage('Test') {
          steps {
             githubNotify account: 'rdok',
                context: 'CI',
@@ -25,25 +22,14 @@ pipeline {
                status: 'PENDING'
 
             sh '''#!/bin/bash
-               set -e
-               source aliases
-               docker-compose-app up -d
-               docker-compose-app exec -u `id -u`:`id -g` -T php sh -c '
-                  composer install
-                  ./docker/wait-for-it.sh "db:3306"
-                  php artisan migrate --env=testing
-               '
-            '''
-         }
-      }
-      stage('Test') {
-         steps {
-            sh '''#!/bin/bash
-               set -e
-               source aliases
-
-               docker-compose-app exec -u `id -u`:`id -g` -T php \
-                  ./vendor/bin/phpunit --testdox-html testdox/index.html
+              set -e
+              source ./aliases.sh
+              cp .env.testing .env
+              docker_compose_local up -d --build db
+              docker_compose_local up -d --build php
+              composer install
+              php artisan migrate --env=testing
+              php ./vendor/bin/phpunit --testdox-html testdox/index.html
             '''
          }
       }
@@ -79,8 +65,8 @@ pipeline {
            ])
            sh '''#!/bin/bash
               set -e
-              source aliases
-              docker-compose-app down -v
+              source ./aliases.sh
+              docker_compose_local down -v --remove-orphans
            '''
         }
     }

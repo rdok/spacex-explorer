@@ -23,29 +23,28 @@ pipeline {
                 sh"""#!/bin/bash -xe
                     cp .env.testing .env
                     docker-compose \
-                        --project-directory . \
+                        --project-directory "${env.WORKSPACE}" \
                         --project-name "${env.PROJECT_NAME}" \
                         --file docker/docker-compose.yml \
                         up -d db
                     docker-compose \
-                        --project-directory . \
+                        --project-directory "${env.WORKSPACE}" \
                         --project-name "${env.PROJECT_NAME}" \
                         --file docker/docker-compose.yml \
-                        up -d -v "${env.WORKSPACE}":/var/www \
-                        php
+                        build
 
                     docker-compose \
-                        --project-directory . \
+                        --project-directory "${env.WORKSPACE}" \
                         --project-name "${env.PROJECT_NAME}" \
                         --file docker/docker-compose.yml \
-                        run exec php \
+                        run -v "${env.WORKSPACE}":/var/www php \
                         composer install
 
                     docker-compose \
-                        --project-directory . \
+                        --project-directory "${env.WORKSPACE}" \
                         --project-name "${env.PROJECT_NAME}" \
                         --file docker/docker-compose.yml \
-                        run exec php \
+                        run -v "${env.WORKSPACE}":/var/www php \
                         php artisan migrate --env=testing
                 """
             }
@@ -87,7 +86,7 @@ pipeline {
         always {
             sh"""#!/bin/bash -xe
                 docker-compose \
-                    --project-directory . \
+                    --project-directory "${env.WORKSPACE}" \
                     --project-name "${env.PROJECT_NAME}" \
                     --file docker/docker-compose.yml \
                     down -v --remove-orphans

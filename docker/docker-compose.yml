@@ -6,8 +6,6 @@ services:
       build:
          context: .
          dockerfile: ./docker/php/Dockerfile
-         args:
-           UID: $DEV_UID
       command: /wait-for db:3306 -- php-fpm
 
   db:

@@ -1,0 +1,103 @@
+pipeline {
+    agent { label "linux" }
+    options { buildDiscarder( logRotator( numToKeepStr: '20' ) ) }
+    triggers { githubPush() }
+    parameters {
+        string(
+            name: 'PROJECT_NAME',
+            defaultValue: "${env.BUILD_TAG}",
+            description: 'For docker-compose.'
+        )
+    }
+    stages {
+        stage('Pending') {
+            steps {
+                githubNotify account: 'rdok',
+                    context: 'Status Check',
+                    credentialsId: 'status-check-github-token',
+                    description: 'Jenkins',
+                    repo: 'spacex-explorer',
+                    sha: "${env.GIT_COMMIT}",
+                    status: 'PENDING'
+            }
+        }
+
+        stage('Build & Start') {
+            steps {
+                ansiColor('xterm') {
+                    sh"""#!/bin/bash -xe
+                        cp .env.testing .env
+                        docker-compose \
+                            --project-directory . \
+                            --project-name "${env.PROJECT_NAME}" \
+                            --file docker/docker-compose.yml \
+                            up -d db
+                        docker-compose \
+                            --project-directory . \
+                            --project-name "${env.PROJECT_NAME}" \
+                            --file docker/docker-compose.yml \
+                            up -d php
+                        docker-compose \
+                            --project-directory . \
+                            --project-name "${env.PROJECT_NAME}" \
+                            --file docker/docker-compose.yml \
+                            exec -T php \
+                            printenv
+                        docker-compose \
+                            --project-directory . \
+                            --project-name "${env.PROJECT_NAME}" \
+                            --file docker/docker-compose.yml \
+                            exec -T php \
+                            php artisan migrate --env=testing
+                    """
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh"""#!/bin/bash -xe
+                    docker-compose \
+                        --project-directory . \
+                        --project-name "${env.PROJECT_NAME}" \
+                        --file docker/docker-compose.yml \
+                        exec -T \
+                        php ./vendor/bin/phpunit --testdox-html testdox/index.html
+                """
+            }
+        }
+
+        stage('Success') {
+            steps {
+                githubNotify account: 'rdok',
+                   context: 'Status Check',
+                   credentialsId: 'status-check-github-token',
+                   description: 'Jenkins',
+                   repo: 'spacex-explorer',
+                   sha: "${env.GIT_COMMIT}",
+                   status: 'SUCCESS'
+                }
+        }
+    }
+
+    post {
+        failure {
+            githubNotify account: 'rdok',
+               context: 'Status Check',
+               credentialsId: 'status-check-github-token',
+               description: 'Jenkins',
+               repo: 'spacex-explorer',
+               sha: "${env.GIT_COMMIT}",
+               status: 'FAILURE'
+        }
+        always {
+            sh"""#!/bin/bash -xe
+                docker-compose \
+                    --project-directory . \
+                    --project-name "${env.PROJECT_NAME}" \
+                    --file docker/docker-compose.yml \
+                    down -v --remove-orphans
+            """
+        }
+    }
+}

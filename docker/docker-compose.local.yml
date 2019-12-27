@@ -3,9 +3,14 @@ version: "3.7"
 services:
 
   php:
-      volumes:
-        - .:/var/www:rw
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        UID: $DEV_UID
+    volumes:
+      - .:/var/www:rw
 
   web:
-      volumes:
-        - .:/var/www:rw
+    volumes:
+      - .:/var/www:rw

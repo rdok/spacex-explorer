@@ -10,7 +10,7 @@ pipeline {
         )
     }
     stages {
-        stage('Pending') {
+        stage('Build & Start') {
             steps {
                 githubNotify account: 'rdok',
                     context: 'Status Check',
@@ -19,38 +19,34 @@ pipeline {
                     repo: 'spacex-explorer',
                     sha: "${env.GIT_COMMIT}",
                     status: 'PENDING'
-            }
-        }
 
-        stage('Build & Start') {
-            steps {
-                ansiColor('xterm') {
-                    sh"""#!/bin/bash -xe
-                        cp .env.testing .env
-                        docker-compose \
-                            --project-directory . \
-                            --project-name "${env.PROJECT_NAME}" \
-                            --file docker/docker-compose.yml \
-                            up -d db
-                        docker-compose \
-                            --project-directory . \
-                            --project-name "${env.PROJECT_NAME}" \
-                            --file docker/docker-compose.yml \
-                            up -d php
-                        docker-compose \
-                            --project-directory . \
-                            --project-name "${env.PROJECT_NAME}" \
-                            --file docker/docker-compose.yml \
-                            exec -T php \
-                            printenv
-                        docker-compose \
-                            --project-directory . \
-                            --project-name "${env.PROJECT_NAME}" \
-                            --file docker/docker-compose.yml \
-                            exec -T php \
-                            php artisan migrate --env=testing
-                    """
-                }
+                sh"""#!/bin/bash -xe
+                    cp .env.testing .env
+                    docker-compose \
+                        --project-directory . \
+                        --project-name "${env.PROJECT_NAME}" \
+                        --file docker/docker-compose.yml \
+                        up -d db
+                    docker-compose \
+                        --project-directory . \
+                        --project-name "${env.PROJECT_NAME}" \
+                        --file docker/docker-compose.yml \
+                        build php
+
+                    docker-compose \
+                        --project-directory . \
+                        --project-name "${env.PROJECT_NAME}" \
+                        --file docker/docker-compose.yml \
+                        run -v "${env.WORKSPACE}":/var/www -w /var/www php \
+                        composer install
+
+                    docker-compose \
+                        --project-directory . \
+                        --project-name "${env.PROJECT_NAME}" \
+                        --file docker/docker-compose.yml \
+                        run -v "${env.WORKSPACE}":/var/www -w /var/www php \
+                        php artisan migrate --env=testing
+                """
             }
         }
 
@@ -61,22 +57,10 @@ pipeline {
                         --project-directory . \
                         --project-name "${env.PROJECT_NAME}" \
                         --file docker/docker-compose.yml \
-                        exec -T \
-                        php ./vendor/bin/phpunit --testdox-html testdox/index.html
+                        run -v "${env.WORKSPACE}":/var/www -w /var/www \
+                        php ./vendor/bin/phpunit
                 """
             }
-        }
-
-        stage('Success') {
-            steps {
-                githubNotify account: 'rdok',
-                   context: 'Status Check',
-                   credentialsId: 'status-check-github-token',
-                   description: 'Jenkins',
-                   repo: 'spacex-explorer',
-                   sha: "${env.GIT_COMMIT}",
-                   status: 'SUCCESS'
-                }
         }
     }
 
@@ -89,6 +73,15 @@ pipeline {
                repo: 'spacex-explorer',
                sha: "${env.GIT_COMMIT}",
                status: 'FAILURE'
+        }
+        success {
+            githubNotify account: 'rdok',
+               context: 'Status Check',
+               credentialsId: 'status-check-github-token',
+               description: 'Jenkins',
+               repo: 'spacex-explorer',
+               sha: "${env.GIT_COMMIT}",
+               status: 'SUCCESS'
         }
         always {
             sh"""#!/bin/bash -xe

@@ -6,7 +6,7 @@ Only dependency docker & docker-compose
 # If your `id -u` is other than 1000 you'll need to update DEV_UID
 cp .env.example .env 
 
-source aliases
+source aliases.sh
 docker_compose_local up -d
 
 # These aliases connect to the php & db docker services

@@ -2,97 +2,58 @@ pipeline {
     agent { label "rdok.dev" }
     options { buildDiscarder( logRotator( numToKeepStr: '5' ) ) }
     triggers { githubPush() }
+    environment {
+        DB_PASSWORD = credentials('spacex-explorer-db-password')
+        VIRTUAL_HOST = 'spacex-explorer.rdok.dev'
+        VIRTUAL_PORT = '3008'
+        LETSENCRYPT_HOST = 'spacex-explorer.rdok.dev'
+        LETSENCRYPT_EMAIL = credentials('rdok-email')
+        DEFAULT_EMAIL = credentials('rdok-email')
+        COMPOSE_PROJECT_NAME = 'spacex-explorer'
+        APP_KEY = credentials('app-key')
+    }
     stages {
         stage('Build') {
             steps {
-                githubNotify account: 'rdok',
-                    context: 'Release',
-                    credentialsId: 'status-check-github-token',
-                    description: 'Jenkins',
-                    repo: 'spacex-explorer',
-                    sha: "${env.GIT_COMMIT}",
-                    status: 'PENDING'
-
                 sh"""#!/bin/bash -xe
-                    cp .env.testing .env
-                    docker-compose \
-                        --project-directory "${env.WORKSPACE}" \
-                        --project-name "${env.PROJECT_NAME}" \
-                        --file docker/docker-compose.yml \
-                        up -d db
-                    docker-compose \
-                        --project-directory "${env.WORKSPACE}" \
-                        --project-name "${env.PROJECT_NAME}" \
-                        --file docker/docker-compose.yml \
-                        build
-
-                    docker-compose \
-                        --project-directory "${env.WORKSPACE}" \
-                        --project-name "${env.PROJECT_NAME}" \
-                        --file docker/docker-compose.yml \
-                        run -v "${env.WORKSPACE}":/var/www php \
-                        composer install
-
-                    docker-compose \
-                        --project-directory "${env.WORKSPACE}" \
-                        --project-name "${env.PROJECT_NAME}" \
-                        --file docker/docker-compose.yml \
-                        run -v "${env.WORKSPACE}":/var/www php \
-                        php artisan migrate --env=testing
+                    source ci/library.sh
+                    docker_compose_infrastructure build
+                    docker_compose_release build
                 """
             }
         }
 
-        stage('Test') {
+        stage('Migrate DB') {
             steps {
                 sh"""#!/bin/bash -xe
-                    docker-compose \
-                        --project-directory . \
-                        --project-name "${env.PROJECT_NAME}" \
-                        --file docker/docker-compose.yml \
-                        run -v "${env.WORKSPACE}":/var/www -w /var/www \
-                        php ./vendor/bin/phpunit --testdox-html testdox/index.html
+                    source ci/library.sh
+                    docker_compose_release run php php artisan migrate --force
                 """
             }
         }
+
+        stage('Up') {
+            steps {
+                sh"""#!/bin/bash -xe
+                    source ci/library.sh
+                    docker_compose_release up -d
+                """
+            }
+        }
+        stage('Health Check') { steps { build 'health-check' } }
     }
 
     post {
         failure {
-            githubNotify account: 'rdok',
-               context: 'Release',
-               credentialsId: 'status-check-github-token',
-               description: 'Jenkins',
-               repo: 'spacex-explorer',
-               sha: "${env.GIT_COMMIT}",
-               status: 'FAILURE'
+            slackSend color: '#FF0000',
+            message: "@here Failed: <${env.BUILD_URL}console | ${env.JOB_NAME}#${env.BUILD_NUMBER}>"
+        }
+        fixed {
+            slackSend color: 'good',
+            message: "@here Fixed: <${env.BUILD_URL}console | ${env.JOB_NAME}#${env.BUILD_NUMBER}>"
         }
         success {
-            githubNotify account: 'rdok',
-               context: 'Release',
-               credentialsId: 'status-check-github-token',
-               description: 'Jenkins',
-               repo: 'spacex-explorer',
-               sha: "${env.GIT_COMMIT}",
-               status: 'SUCCESS'
-        }
-        always {
-            sh"""#!/bin/bash -xe
-                docker-compose \
-                    --project-directory "${env.WORKSPACE}" \
-                    --project-name "${env.PROJECT_NAME}" \
-                    --file docker/docker-compose.yml \
-                    down -v --remove-orphans
-            """
-            publishHTML([
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: false,
-                reportDir: 'testdox',
-                reportFiles: 'index.html',
-                reportName: 'Tests Report',
-                reportTitles: ''
-            ])
+            slackSend message: "Stable: <${env.BUILD_URL}console | ${env.JOB_NAME}#${env.BUILD_NUMBER}>"
         }
     }
 }

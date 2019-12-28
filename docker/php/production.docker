@@ -1,0 +1,9 @@
+ARG COMPOSE_PROJECT_NAME
+
+FROM ${COMPOSE_PROJECT_NAME}_php
+
+COPY . /var/www
+
+RUN composer install --no-progress --no-progress --no-dev --no-suggest \
+        --optimize-autoloader --no-interaction \
+    && chown -R www-data:www-data .

@@ -14,11 +14,11 @@ php() {
 }
 
 composer() {
-    docker-compose_dev exec -T php composer "$@"
+    docker_compose_dev exec -T php composer "$@"
 }
 
 mysql() {
-    docker-compose_dev exec -T db mysql "$@"
+    docker_compose_dev exec -T db mysql "$@"
 }
 
 npm_dev() {

@@ -2,12 +2,8 @@ pipeline {
     agent { label "linux" }
     options { buildDiscarder( logRotator( numToKeepStr: '100' ) ) }
     triggers { githubPush() }
-    parameters {
-        string(
-            name: 'PROJECT_NAME',
-            defaultValue: "${env.BUILD_TAG}",
-            description: 'For docker-compose.'
-        )
+    environment {
+        COMPOSE_PROJECT_NAME = 'spacex-explorer'
     }
     stages {
         stage('Build & Start') {
@@ -23,14 +19,14 @@ pipeline {
                 sh"""#!/bin/bash -xe
                     source ci/library.sh
                     cp .env.testing .env
-                    docker_compose up -d db
-                    docker_compose build php
+                    docker_compose_infrastructure up -d db
+                    docker_compose_infrastructure build php
 
-                    docker_compose run \
+                    docker_compose_infrastructure run \
                         -v "${env.WORKSPACE}":/var/www php \
                         composer install
 
-                    docker_compose run \
+                    docker_compose_infrastructure run \
                         -v "${env.WORKSPACE}":/var/www php \
                         php artisan migrate --env=testing
                 """
@@ -41,7 +37,7 @@ pipeline {
             steps {
                 sh"""#!/bin/bash -xe
                     source ci/library.sh
-                    docker_compose run \
+                    docker_compose_infrastructure run \
                         -v "${env.WORKSPACE}":/var/www -w /var/www php \
                         ./vendor/bin/phpunit --testdox-html testdox/index.html
                 """
@@ -71,7 +67,7 @@ pipeline {
         always {
             sh"""#!/bin/bash -xe
                 source ci/library.sh
-                docker_compose down -v --remove-orphans
+                docker_compose_infrastructure down -v --remove-orphans
             """
             publishHTML([
                 allowMissing: false,

@@ -21,30 +21,17 @@ pipeline {
                     status: 'PENDING'
 
                 sh"""#!/bin/bash -xe
+                    source ci/library.sh
                     cp .env.testing .env
-                    docker-compose \
-                        --project-directory "${env.WORKSPACE}" \
-                        --project-name "${env.PROJECT_NAME}" \
-                        --file docker/docker-compose.yml \
-                        up -d db
-                    docker-compose \
-                        --project-directory "${env.WORKSPACE}" \
-                        --project-name "${env.PROJECT_NAME}" \
-                        --file docker/docker-compose.yml \
-                        build
+                    docker_compose up -d db
+                    docker_compose build php
 
-                    docker-compose \
-                        --project-directory "${env.WORKSPACE}" \
-                        --project-name "${env.PROJECT_NAME}" \
-                        --file docker/docker-compose.yml \
-                        run -v "${env.WORKSPACE}":/var/www php \
+                    docker_compose run \
+                        -v "${env.WORKSPACE}":/var/www php \
                         composer install
 
-                    docker-compose \
-                        --project-directory "${env.WORKSPACE}" \
-                        --project-name "${env.PROJECT_NAME}" \
-                        --file docker/docker-compose.yml \
-                        run -v "${env.WORKSPACE}":/var/www php \
+                    docker_compose run \
+                        -v "${env.WORKSPACE}":/var/www php \
                         php artisan migrate --env=testing
                 """
             }
@@ -53,12 +40,10 @@ pipeline {
         stage('Test') {
             steps {
                 sh"""#!/bin/bash -xe
-                    docker-compose \
-                        --project-directory . \
-                        --project-name "${env.PROJECT_NAME}" \
-                        --file docker/docker-compose.yml \
-                        run -v "${env.WORKSPACE}":/var/www -w /var/www \
-                        php ./vendor/bin/phpunit --testdox-html testdox/index.html
+                    source ci/library.sh
+                    docker_compose run \
+                        -v "${env.WORKSPACE}":/var/www -w /var/www php \
+                        ./vendor/bin/phpunit --testdox-html testdox/index.html
                 """
             }
         }
@@ -85,11 +70,8 @@ pipeline {
         }
         always {
             sh"""#!/bin/bash -xe
-                docker-compose \
-                    --project-directory "${env.WORKSPACE}" \
-                    --project-name "${env.PROJECT_NAME}" \
-                    --file docker/docker-compose.yml \
-                    down -v --remove-orphans
+                source ci/library.sh
+                docker_compose down -v --remove-orphans
             """
             publishHTML([
                 allowMissing: false,

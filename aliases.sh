@@ -1,12 +1,5 @@
 #!/bin/bash
 
-docker_compose_app() {
-    docker-compose \
-        --project-directory "$(pwd)" \
-        --project-name 'spacex-explorer' \
-        --file docker/docker-compose.yml \
-        "$@"
-}
 docker_compose_dev() {
     docker-compose \
         --project-directory "$(pwd)" \

@@ -1,9 +1,17 @@
 ARG COMPOSE_PROJECT_NAME
+FROM node:8-alpine3.11
+
+WORKDIR /app
+COPY . .
+
+RUN npm install \
+    && npm run production \
+    && rm -rf node_modules
 
 FROM ${COMPOSE_PROJECT_NAME}_php
+COPY --from=0 /app /var/www
 
-COPY . /var/www
-
-RUN composer install --no-progress --no-progress --no-dev --no-suggest \
+RUN rm -rf /var/www/html \
+    && composer install --no-progress --no-dev --no-suggest \
         --optimize-autoloader --no-interaction \
     && chown -R www-data:www-data .

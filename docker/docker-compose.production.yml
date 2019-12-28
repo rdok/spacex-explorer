@@ -11,12 +11,16 @@ services:
     environment:
       - DB_PASSWORD
       - APP_KEY
+      - APP_URL="https://${VIRTUAL_HOST}"
+      - COMPOSER_CACHE_DIR=/composer-cache
     command: sh -c "
         /wait-for db:3306
         && php-fpm
       "
     volumes:
       - app:/var/www
+      - composer-cache:/composer-cache
+      - npm-cache:/root/.npm
 
   web:
     environment:
@@ -31,6 +35,8 @@ services:
 
 volumes:
   app:
+  npm-cache:
+  composer-cache:
 
 networks:
   frontend:

@@ -7,11 +7,18 @@
                 <div class="card">
                     <div class="card-header">Threads</div>
 
-                    @foreach($threads as $thread)
-                        <div class="card-body">
-                            {{ $thread->title }}
-                        </div>
-                    @endforeach
+                    <div class="card-body">
+                        <?php /** @var \App\Thread $thread */?>
+                        @foreach($threads as $thread)
+                            <article>
+                                <h4>
+                                    <a href="{!! $thread->path() !!}">{{ $thread->title }}</a>
+                                </h4>
+                                <div class="body">{{ $thread->body }}</div>
+                            </article>
+                            <hr/>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>

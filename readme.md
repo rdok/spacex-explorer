@@ -5,7 +5,6 @@ Only dependency docker & docker-compose
 
 ##### Install
 ```
-# If your `id -u` is other than 1000 you'll need to update DEV_UID
 cp .env.example .env 
 
 source aliases.sh

@@ -22,5 +22,12 @@ mysql() {
 }
 
 npm_dev() {
-    docker run --rm -i -v "/$(pwd)":"/app" -w //app node:8-alpine3.11 npm "$@"
+    docker run \
+        --rm \
+        --name spacex-explorer_npm-dev \
+        --volume "/$(pwd)":"/app" \
+        --workdir //app \
+        --interactive \
+        node:8-alpine3.11 npm \
+        "$@"
 }

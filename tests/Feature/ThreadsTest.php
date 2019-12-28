@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use App\Thread;
 
 class ThreadsTest extends FeatureTestCase
@@ -13,11 +11,28 @@ class ThreadsTest extends FeatureTestCase
     {
         $threads = factory(Thread::class, 2)->create();
 
-        $response = $this->get('/threads');
-
-        $response->assertStatus(200)
+        $response = $this->get('/threads')
             ->assertSee('<div class="card-header">Threads</div>')
-            ->assertSeeText($threads->get(0)->title)
-            ->assertSeeText($threads->get(1)->title);
+            ->assertStatus(200);
+
+        $this->assertSeeThreads($response, $threads);
+    }
+
+
+    /** @test */
+    public function should_view_a_thread()
+    {
+        $thread = factory(Thread::class)->create();
+
+        $cardHeader = sprintf(
+            '<div class="card-header">%s</div>',
+            $thread->title
+        );
+
+        $response = $this->get('/threads/' . $thread->id)
+            ->assertSee($cardHeader)
+            ->assertStatus(200);
+
+        $this->assertSeeThreadBody($response, $thread);
     }
 }

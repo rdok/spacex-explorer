@@ -1,0 +1,98 @@
+pipeline {
+    agent { label "rdok.dev" }
+    options { buildDiscarder( logRotator( numToKeepStr: '5' ) ) }
+    triggers { githubPush() }
+    stages {
+        stage('Build') {
+            steps {
+                githubNotify account: 'rdok',
+                    context: 'Release',
+                    credentialsId: 'status-check-github-token',
+                    description: 'Jenkins',
+                    repo: 'spacex-explorer',
+                    sha: "${env.GIT_COMMIT}",
+                    status: 'PENDING'
+
+                sh"""#!/bin/bash -xe
+                    cp .env.testing .env
+                    docker-compose \
+                        --project-directory "${env.WORKSPACE}" \
+                        --project-name "${env.PROJECT_NAME}" \
+                        --file docker/docker-compose.yml \
+                        up -d db
+                    docker-compose \
+                        --project-directory "${env.WORKSPACE}" \
+                        --project-name "${env.PROJECT_NAME}" \
+                        --file docker/docker-compose.yml \
+                        build
+
+                    docker-compose \
+                        --project-directory "${env.WORKSPACE}" \
+                        --project-name "${env.PROJECT_NAME}" \
+                        --file docker/docker-compose.yml \
+                        run -v "${env.WORKSPACE}":/var/www php \
+                        composer install
+
+                    docker-compose \
+                        --project-directory "${env.WORKSPACE}" \
+                        --project-name "${env.PROJECT_NAME}" \
+                        --file docker/docker-compose.yml \
+                        run -v "${env.WORKSPACE}":/var/www php \
+                        php artisan migrate --env=testing
+                """
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh"""#!/bin/bash -xe
+                    docker-compose \
+                        --project-directory . \
+                        --project-name "${env.PROJECT_NAME}" \
+                        --file docker/docker-compose.yml \
+                        run -v "${env.WORKSPACE}":/var/www -w /var/www \
+                        php ./vendor/bin/phpunit --testdox-html testdox/index.html
+                """
+            }
+        }
+    }
+
+    post {
+        failure {
+            githubNotify account: 'rdok',
+               context: 'Release',
+               credentialsId: 'status-check-github-token',
+               description: 'Jenkins',
+               repo: 'spacex-explorer',
+               sha: "${env.GIT_COMMIT}",
+               status: 'FAILURE'
+        }
+        success {
+            githubNotify account: 'rdok',
+               context: 'Release',
+               credentialsId: 'status-check-github-token',
+               description: 'Jenkins',
+               repo: 'spacex-explorer',
+               sha: "${env.GIT_COMMIT}",
+               status: 'SUCCESS'
+        }
+        always {
+            sh"""#!/bin/bash -xe
+                docker-compose \
+                    --project-directory "${env.WORKSPACE}" \
+                    --project-name "${env.PROJECT_NAME}" \
+                    --file docker/docker-compose.yml \
+                    down -v --remove-orphans
+            """
+            publishHTML([
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: false,
+                reportDir: 'testdox',
+                reportFiles: 'index.html',
+                reportName: 'Tests Report',
+                reportTitles: ''
+            ])
+        }
+    }
+}

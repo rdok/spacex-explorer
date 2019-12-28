@@ -22,8 +22,8 @@ php() {
       --project-name 'spacex-explorer' \
       --file docker/docker-compose.yml \
       --file docker/docker-compose.local.yml \
-      exec --user "$(id -u)":"$(id -g)" -T \
-      php php "$@"
+      exec -T php \
+      php "$@"
 }
 
 composer() {
@@ -32,8 +32,8 @@ composer() {
       --project-name 'spacex-explorer' \
       --file docker/docker-compose.yml \
       --file docker/docker-compose.local.yml \
-      exec --user "$(id -u)":"$(id -g)" -T \
-      php composer "$@"
+      exec -T php \
+      composer "$@"
 }
 
 mysql() {
@@ -42,6 +42,6 @@ mysql() {
       --project-name 'spacex-explorer' \
       --file docker/docker-compose.yml \
       --file docker/docker-compose.local.yml \
-      exec --user "$(id -u)":"$(id -g)" -T \
-      db mysql "$@"
+      exec -T db \
+      mysql "$@"
 }

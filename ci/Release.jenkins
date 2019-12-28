@@ -1,6 +1,9 @@
 pipeline {
     agent { label "rdok.dev" }
-    options { buildDiscarder( logRotator( numToKeepStr: '5' ) ) }
+    options {
+        buildDiscarder( logRotator( numToKeepStr: '5' ) )
+        disableConcurrentBuilds()
+    }
     triggers { githubPush() }
     environment {
         DB_PASSWORD = credentials('spacex-explorer-db-password')
@@ -18,20 +21,19 @@ pipeline {
                 sh"""#!/bin/bash -xe
                     source ci/library.sh
                     docker_compose_infrastructure build
+                    docker_compose_src build
                     docker_compose_release build
                 """
             }
         }
-
         stage('Migrate DB') {
             steps {
                 sh"""#!/bin/bash -xe
                     source ci/library.sh
-                    docker_compose_release run php php artisan migrate --force
+                    docker_compose_release run --rm php php artisan migrate --force
                 """
             }
         }
-
         stage('Up') {
             steps {
                 sh"""#!/bin/bash -xe
@@ -44,16 +46,8 @@ pipeline {
     }
 
     post {
-        failure {
-            slackSend color: '#FF0000',
-            message: "@here Failed: <${env.BUILD_URL}console | ${env.JOB_NAME}#${env.BUILD_NUMBER}>"
-        }
-        fixed {
-            slackSend color: 'good',
-            message: "@here Fixed: <${env.BUILD_URL}console | ${env.JOB_NAME}#${env.BUILD_NUMBER}>"
-        }
-        success {
-            slackSend message: "Stable: <${env.BUILD_URL}console | ${env.JOB_NAME}#${env.BUILD_NUMBER}>"
-        }
+        failure { slackSend color: '#FF0000', message: "@here Failed: <${env.BUILD_URL}console | ${env.JOB_NAME}#${env.BUILD_NUMBER}>" }
+        fixed { slackSend color: 'good', message: "@here Fixed: <${env.BUILD_URL}console | ${env.JOB_NAME}#${env.BUILD_NUMBER}>" }
+        success { slackSend message: "Stable: <${env.BUILD_URL}console | ${env.JOB_NAME}#${env.BUILD_NUMBER}>" }
     }
 }

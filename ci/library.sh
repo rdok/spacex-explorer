@@ -14,3 +14,10 @@ docker_compose_release() {
         --file docker/docker-compose.production.yml \
         "$@"
 }
+
+docker_compose_src() {
+    docker-compose \
+        --project-directory "${WORKSPACE}" \
+        --file docker/src/docker-compose.yml \
+        "$@"
+}

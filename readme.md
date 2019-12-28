@@ -1,17 +1,18 @@
 ### Development
 Only dependency docker & docker-compose
 
-##### Usage
+##### Install
 ```
 # If your `id -u` is other than 1000 you'll need to update DEV_UID
 cp .env.example .env 
 
 source aliases.sh
-docker_compose_local up -d
 
-# These aliases connect to the php & db docker services
+docker_compose_dev up -d
 php artisan migrate
-mysql -uroot -psecret
+npm_dev install
+
+# visit http://localhost:3000
 ```
 
 **Test**

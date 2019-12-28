@@ -1,6 +1,9 @@
 pipeline {
     agent { label "rdok.dev" }
-    options { buildDiscarder( logRotator( numToKeepStr: '5' ) ) }
+    options {
+        buildDiscarder( logRotator( numToKeepStr: '5' ) )
+        disableConcurrentBuilds()
+    }
     triggers { githubPush() }
     environment {
         DB_PASSWORD = credentials('spacex-explorer-db-password')
@@ -18,6 +21,7 @@ pipeline {
                 sh"""#!/bin/bash -xe
                     source ci/library.sh
                     docker_compose_infrastructure build
+                    docker_compose_src build
                     docker_compose_release build
                 """
             }
@@ -26,9 +30,6 @@ pipeline {
             steps {
                 sh"""#!/bin/bash -xe
                     source ci/library.sh
-                    docker_compose_release rm --stop -v --force php
-                    docker_compose_release rm --stop -v --force web
-                    docker_compose_release run --rm php rm -rf /var/www/*
                     docker_compose_release run --rm php php artisan migrate --force
                 """
             }

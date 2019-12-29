@@ -16,12 +16,12 @@ class ThreadTest extends UnitTestCase
     }
 
     /** @test */
-    public function should_have_path()
+    public function should_have_url()
     {
         $thread = new Thread;
 
         $thread->id = 2077;
 
-        $this->assertSame(url('threads/2077'), $thread->path());
+        $this->assertSame(url('threads/2077'), $thread->url());
     }
 }

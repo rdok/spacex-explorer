@@ -1,12 +1,13 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Thread;
 
 use App\Reply;
 use App\Thread;
 use Carbon\Carbon;
+use Tests\Feature\FeatureTestCase;
 
-class ThreadsTest extends FeatureTestCase
+class ReadThreadTest extends FeatureTestCase
 {
     /** @test */
     public function should_index_threads()
@@ -19,26 +20,28 @@ class ThreadsTest extends FeatureTestCase
 
         /** @var Thread $thread */
         foreach ($threads as $thread) {
-            $response->assertSeeCardUrlTitle($thread->url(), $thread->title)
+            $response->assertSeeCardHeaderUrl($thread->url(), $thread->title)
                 ->assertSeeCardText($thread->body);
         }
     }
 
 
     /** @test */
-    public function should_view_a_thread()
+    public function should_read_a_thread()
     {
         /** @var Thread $thread */
         $thread = factory(Thread::class)->create();
 
+        $header = sprintf('%s - %s', $thread->title, $thread->author->name);
+
         $this->get($thread->url())
             ->assertStatus(200)
-            ->assertSeeCardHeader($thread->title)
+            ->assertSeeCardHeader($header)
             ->assertSeeCardText($thread->body);
     }
 
     /** @test */
-    public function should_view_thread_replies()
+    public function should_read_thread_replies()
     {
         /** @var Thread $thread */
         $thread = factory(Thread::class)->create();

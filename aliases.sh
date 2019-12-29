@@ -21,13 +21,13 @@ dmysql() {
     docker_compose_dev exec -T db mysql "$@"
 }
 
-dnpm() {
+dyarn() {
     docker run \
         --rm \
         --name spacex-explorer_npm-dev \
         --volume "/$(pwd)":"/app" \
         --workdir //app \
         --interactive \
-        node:8-alpine3.11 npm \
+        node:8-alpine3.11 yarn \
         "$@"
 }

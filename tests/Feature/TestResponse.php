@@ -4,23 +4,25 @@ namespace Tests\Feature;
 
 class TestResponse extends \Illuminate\Foundation\Testing\TestResponse
 {
-    public function assertSeeCardUrlTitle($url, $title)
+    public function assertSeeCardHeaderUrl($url, $text)
     {
-        $title = sprintf('<a href="%s">%s</a>', $url, $title);
+        $value = sprintf( '<a href="%s">%s</a>', $url, $text );
 
-        return $this->assertSeeCardTitle($title);
+        return $this->assertSeeCardHeader($value);
     }
 
-    public function assertSeeCardHeader($header)
+    public function assertSeeCardHeader($value)
     {
-        $cardHeader = sprintf('<div class="card-header">%s</div>', $header);
+        $value = sprintf('<div class="card-header bg-white">%s</div>', $value);
 
-        return $this->assertSee($cardHeader);
+        return $this->assertSee($value);
     }
 
-    public function assertSeeCardTitle($title)
+    public function assertSeeCardTitle($value)
     {
-        $value = sprintf('<h5 class="card-title">%s</h5>', $title);
+        $value = htmlspecialchars($value, ENT_QUOTES);
+
+        $value = sprintf('<h5 class="card-title">%s</h5>', $value);
 
         return $this->assertSee($value);
     }

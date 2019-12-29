@@ -1,3 +1,4 @@
+<?php /** @var \App\Thread $thread */?>
 @extends('layouts.app')
 
 @section('content')
@@ -6,7 +7,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8 mb-3">
                 <div class="card">
-                    <div class="card-header">{{ $thread->title }}</div>
+                    <div class="card-header">{{ $thread->title }} - {{ $thread->author->name }}</div>
 
                     <div class="card-body">
                         <p class="card-text">{{ $thread->body }}</p>

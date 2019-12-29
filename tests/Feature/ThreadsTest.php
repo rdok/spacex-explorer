@@ -31,9 +31,11 @@ class ThreadsTest extends FeatureTestCase
         /** @var Thread $thread */
         $thread = factory(Thread::class)->create();
 
+        $header = sprintf('%s - %s', $thread->title, $thread->author->name);
+
         $this->get($thread->url())
             ->assertStatus(200)
-            ->assertSeeCardHeader($thread->title)
+            ->assertSeeCardHeader($header)
             ->assertSeeCardText($thread->body);
     }
 

@@ -18,7 +18,7 @@ class Thread extends Model
         return $this->hasMany(Reply::class);
     }
 
-    public function path()
+    public function url()
     {
         return url('threads/' . $this->id);
     }

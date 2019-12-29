@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Reply;
 use App\Thread;
+use Carbon\Carbon;
 
 class ThreadsTest extends FeatureTestCase
 {
@@ -11,28 +13,50 @@ class ThreadsTest extends FeatureTestCase
     {
         $threads = factory(Thread::class, 2)->create();
 
-        $response = $this->get('/threads')
-            ->assertSee('<div class="card-header">Threads</div>')
-            ->assertStatus(200);
+        $response = $this->get('threads')
+            ->assertStatus(200)
+            ->assertSeeCardHeader('Threads');
 
-        $this->assertSeeThreads($response, $threads);
+        /** @var Thread $thread */
+        foreach ($threads as $thread) {
+            $response->assertSeeCardUrlTitle($thread->url(), $thread->title)
+                ->assertSeeCardText($thread->body);
+        }
     }
 
 
     /** @test */
     public function should_view_a_thread()
     {
+        /** @var Thread $thread */
         $thread = factory(Thread::class)->create();
 
-        $cardHeader = sprintf(
-            '<div class="card-header">%s</div>',
-            $thread->title
-        );
+        $this->get($thread->url())
+            ->assertStatus(200)
+            ->assertSeeCardHeader($thread->title)
+            ->assertSeeCardText($thread->body);
+    }
 
-        $response = $this->get('/threads/' . $thread->id)
-            ->assertSee($cardHeader)
+    /** @test */
+    public function should_view_thread_replies()
+    {
+        /** @var Thread $thread */
+        $thread = factory(Thread::class)->create();
+        $replies = factory(Reply::class, 2)
+            ->create(['thread_id' => $thread->id]);
+
+        $response = $this->get($thread->url())
             ->assertStatus(200);
 
-        $this->assertSeeThreadBody($response, $thread);
+        /** @var Reply $reply */
+        foreach ($replies as $reply) {
+            /** @var Carbon $createdAt */
+            $createdAt = $reply->created_at;
+
+            $response
+                ->assertSeeCardTitle($reply->author->name)
+                ->assertSeeCardText($reply->body)
+                ->assertSeeCardTextMuted($createdAt->diffForHumans());
+        }
     }
 }

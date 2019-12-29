@@ -1,26 +1,24 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">Threads</div>
 
-                    <div class="card-body">
-                        <?php /** @var \App\Thread $thread */?>
-                        @foreach($threads as $thread)
-                            <article>
-                                <h4>
-                                    <a href="{!! $thread->path() !!}">{{ $thread->title }}</a>
-                                </h4>
-                                <div class="body">{{ $thread->body }}</div>
-                            </article>
-                            <hr/>
-                        @endforeach
-                    </div>
-                </div>
+    <div class="card mb-3">
+        @include('_card.header', ['header' => 'Threads'])
+    </div>
+
+    <?php /** @var \App\Thread $thread */?>
+    @foreach($threads as $thread)
+        <div class="card p-3 mt-2">
+            <div class="body">
+                @include('_card.url_title', [
+                    'title' => $thread->title,
+                     'url' => $thread->url()
+                 ])
+
+                @include('_card.text', ['text' => $thread->body])
             </div>
         </div>
-    </div>
+    @endforeach
+
+
 @endsection

@@ -9,19 +9,19 @@ docker_compose_dev() {
         "$@"
 }
 
-php() {
+dphp() {
     docker_compose_dev exec -T php php "$@"
 }
 
-composer() {
+dcomposer() {
     docker_compose_dev exec -T php composer "$@"
 }
 
-mysql() {
+dmysql() {
     docker_compose_dev exec -T db mysql "$@"
 }
 
-npm_dev() {
+dnpm() {
     docker run \
         --rm \
         --name spacex-explorer_npm-dev \

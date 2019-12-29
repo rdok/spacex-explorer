@@ -1,1 +1,0 @@
-<p class="card-text"><small class="text-muted">{{ $value }}</small></p>

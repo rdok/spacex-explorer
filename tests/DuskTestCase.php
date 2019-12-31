@@ -19,6 +19,8 @@ abstract class DuskTestCase extends BaseTestCase
      */
     public static function prepare()
     {
+        static::useChromedriver(realpath(__DIR__  . '/../../home/chromedrive'));
+
         static::startChromeDriver();
     }
 
@@ -33,13 +35,16 @@ abstract class DuskTestCase extends BaseTestCase
             '--disable-gpu',
             '--headless',
             '--window-size=1920,1080',
-            '--no-sandbox'
+            '--no-sandbox',
+            '--disable-dev-shm-usage'
         ]);
 
+        $desiredCapabilities = DesiredCapabilities::chrome()
+            ->setCapability(ChromeOptions::CAPABILITY, $options);
+
         return RemoteWebDriver::create(
-            'http://localhost:9515', DesiredCapabilities::chrome()->setCapability(
-                ChromeOptions::CAPABILITY, $options
-            )
+            'http://localhost:9515',
+            $desiredCapabilities
         );
     }
 }

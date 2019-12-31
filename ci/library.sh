@@ -21,3 +21,7 @@ docker_compose_src() {
         --file docker/src/docker-compose.yml \
         "$@"
 }
+
+ddusk() {
+  docker_compose_dev run --rm  dusk php artisan dusk
+}

@@ -23,5 +23,6 @@ dyarn run dev
 ```
 dphp artisan migrate --env=testing
 dphp ./vendor/bin/phpunit
+ddusk
 ```
 

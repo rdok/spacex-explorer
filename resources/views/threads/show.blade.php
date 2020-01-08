@@ -4,7 +4,9 @@
 @section('content')
 
     <div class="card mb-3">
-        <div class="card-header bg-white">{{ $thread->title }} - {{ $thread->author->name }}</div>
+        <div class="card-header bg-white">
+           {{ $thread->title }} - {{ $thread->author->name }}
+        </div>
 
         <div class="card-body">
             <p class="card-text">{{ $thread->body }}</p>

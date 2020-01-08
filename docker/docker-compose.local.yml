@@ -3,12 +3,20 @@ version: "3.7"
 services:
 
   php:
+    user: "${UID}:${GID}"
     volumes:
-      - .:/var/www:rw
+      - .:/var/www
 
   web:
     volumes:
-      - .:/var/www:rw
+      - .:/var/www
+
+  node:
+    image: node:13-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: tail -f /dev/null
 
   dusk:
     volumes:
@@ -19,4 +27,4 @@ services:
       dockerfile: ./docker/dusk/Dockerfile
     networks:
       - backend
-    command: 'ls -lat'
+    command: tail -f /dev/null

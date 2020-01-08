@@ -6,23 +6,29 @@ Only dependency docker & docker-compose
 ##### Install
 ```
 cp .env.example .env 
+# Update UID/GID `id -u`/`id -g`
+
 source aliases.sh
+
 docker_compose_dev up -d
-dcomposer install
-dphp artisan migrate
-dyarn install
-dyarn run dev
+
+docker_compose_dev exec php composer install
+docker_compose_dev exec php php artisan migrate
+
+docker_compose_dev exec node yarn install
+docker_compose_dev exec node yarn run dev
 
 # visit http://localhost:3000
 ```
 
 ##### Database
-`dmysql -uroot -psecret`
+`docker_compose_dev exec db mysql -uroot -psecret`
 
 **Test**
 ```
-dphp artisan migrate --env=testing
-dphp ./vendor/bin/phpunit
-ddusk
+docker_compose_dev exec php php artisan migrate --env=testing
+docker_compose_dev exec php ./vendor/bin/phpunit
+docker_compose_dev exec php ./vendor/bin/phpunit
+docker_compose_dev run --rm  dusk php artisan dusk "$@"
 ```
 

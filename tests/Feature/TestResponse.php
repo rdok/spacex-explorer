@@ -2,20 +2,31 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\Assert as PHPUnit;
+
 class TestResponse extends \Illuminate\Foundation\Testing\TestResponse
 {
     public function assertSeeCardHeaderUrl($url, $text)
     {
-        $value = sprintf( '<a href="%s">%s</a>', $url, $text );
+        $pattern = sprintf(
+            '<a href="%s">\s*%s\s*\<\/a>',
+            preg_quote($url, '/'),
+            preg_quote($text, '/')
+        );
 
-        return $this->assertSeeCardHeader($value);
+        return $this->assertSeeCardHeader($pattern, false);
     }
 
-    public function assertSeeCardHeader($value)
+    public function assertSeeCardHeader($value, $quoteRegex = true)
     {
-        $value = sprintf('<div class="card-header bg-white">%s</div>', $value);
+        $pattern = sprintf(
+            '/<div class="card-header bg-white">\s*%s\s*\<\/div>/m',
+            $quoteRegex ? preg_quote($value) : $value
+        );
 
-        return $this->assertSee($value);
+        PHPUnit::assertRegExp($pattern, $this->getContent());
+
+        return $this;
     }
 
     public function assertSeeCardTitle($value)

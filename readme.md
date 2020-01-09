@@ -14,6 +14,7 @@ docker_compose_dev up -d
 
 docker_compose_dev exec php composer install
 docker_compose_dev exec php php artisan migrate
+docker_compose_dev exec php php artisan db:seed
 
 docker_compose_dev exec node yarn install
 docker_compose_dev exec node yarn run dev

@@ -35,7 +35,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <!-- Left Side Of Navbar -->
                 <ul class="navbar-nav mr-auto">
-
+                    <li><a href="{{ url('threads') }}">Threads</a></li>
                 </ul>
 
                 <!-- Right Side Of Navbar -->
@@ -80,6 +80,7 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8">
+                    @include('layouts._error')
                     @yield('content')
                 </div>
             </div>

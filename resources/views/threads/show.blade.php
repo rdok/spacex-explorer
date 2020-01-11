@@ -5,7 +5,7 @@
 
     <div class="card mb-3">
         <div class="card-header bg-white">
-           {{ $thread->title }} - {{ $thread->author->name }}
+            {{ $thread->title }} - {{ $thread->author->name }}
         </div>
 
         <div class="card-body">
@@ -16,5 +16,7 @@
     @foreach($thread->replies as $reply)
         @include('threads._reply', compact('reply'))
     @endforeach
+
+    @include('threads._reply_form', compact('thread'))
 
 @endsection

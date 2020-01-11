@@ -4,6 +4,8 @@ services:
 
   php:
     user: "${UID}:${GID}"
+    environment:
+      - COMPOSER_CACHE_DIR=/var/www/.composer
     volumes:
       - .:/var/www
 
@@ -28,3 +30,6 @@ services:
     networks:
       - backend
     command: tail -f /dev/null
+
+volumes:
+  composer:

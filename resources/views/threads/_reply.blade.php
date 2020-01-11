@@ -4,6 +4,10 @@
 
         <p class="card-text">{{ $reply->body }}</p>
 
-        <p class="card-text"><small class="text-muted">{{ $reply->created_at->diffForHumans() }}</small></p>
+        <p class="card-text">
+            <small class="text-muted">
+                {{ $reply->created_at->diffForHumans() }}
+            </small>
+        </p>
     </div>
 </div>

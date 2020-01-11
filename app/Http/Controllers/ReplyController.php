@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReplyRequest;
 use App\Reply;
 use App\Thread;
 use Illuminate\Http\Request;
+use Illuminate\Session\Store;
 use Illuminate\Support\Facades\Auth;
 
 class ReplyController extends Controller
@@ -36,7 +38,7 @@ class ReplyController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function store(Thread $thread, Request $request)
+    public function store(Thread $thread, StoreReplyRequest $request)
     {
         $reply = new Reply($request->all());
         $reply->author()->associate($request->user());

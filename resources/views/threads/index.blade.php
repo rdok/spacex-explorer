@@ -10,5 +10,8 @@
         @include('threads._thread', compact('thread'))
     @endforeach
 
+    <div class="mt-3">
+        {{ $threads->links() }}
+    </div>
 
 @endsection

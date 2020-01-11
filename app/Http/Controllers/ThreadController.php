@@ -9,7 +9,7 @@ class ThreadController extends Controller
 {
     public function index()
     {
-        $threads = Thread::query()->get();
+        $threads = Thread::query()->paginate();
 
         return view('threads.index', compact('threads'));
     }

@@ -7,7 +7,7 @@ use App\Thread;
 use Carbon\Carbon;
 use Tests\Feature\FeatureTestCase;
 
-class ReadThreadTest extends FeatureTestCase
+class ThreadTest extends FeatureTestCase
 {
     /** @test */
     public function should_index_threads()

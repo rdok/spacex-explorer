@@ -1,4 +1,6 @@
 tags
+.composer
+.idea
 
 _ide_helper*
 .phpstorm.meta.php

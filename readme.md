@@ -22,14 +22,16 @@ docker_compose_dev exec node yarn run dev
 # visit http://localhost:3000
 ```
 
-##### Database
-`docker_compose_dev exec db mysql -uroot -psecret`
+##### Test
 
-**Test**
 ```
 docker_compose_dev exec php php artisan migrate --env=testing
 docker_compose_dev exec php ./vendor/bin/phpunit
-docker_compose_dev exec php ./vendor/bin/phpunit
-docker_compose_dev run --rm  dusk php artisan dusk "$@"
+
+docker_compose_dev exec dusk php artisan migrate --env=dusk.local
+docker_compose_dev exec dusk php artisan dusk:chrome-driver
+docker_compose_dev exec dusk php artisan dusk
 ```
 
+**Database**
+`docker_compose_dev exec db mysql -uroot -psecret`

@@ -8,7 +8,7 @@ use App\User;
 use Illuminate\Auth\AuthenticationException;
 use Tests\Feature\FeatureTestCase;
 
-class CreateReplyTest extends FeatureTestCase
+class ReplyTest extends FeatureTestCase
 {
     /** @test */
     public function should_reply_to_thread()

@@ -56,10 +56,15 @@ class ReplyTest extends FunctionalTestCase
         $user = factory(User::class)->create();
 
         $this->visit($thread->url())
-            ->dontSeeElement($replyFormElement);
+            ->dontSeeElement($replyFormElement)
+            ->seeInElement(
+                'div.alert.alert-secondary',
+                'Please <a href="' . url('login') . '">sign in</a> in to participate.'
+            );
 
         $this->actingAs($user)
             ->visit($thread->url())
+            ->dontSeeElement('div.alert.alert-primary')
             ->seeElement($replyFormElement);
     }
 
@@ -69,7 +74,7 @@ class ReplyTest extends FunctionalTestCase
         $thread = new Thread;
         $thread->id = 2077;
 
-        $this->post($thread->url() . '/replies')
+        $this->post($thread->url('replies'))
             ->assertRedirectedTo('login');
     }
 }

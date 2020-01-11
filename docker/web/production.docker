@@ -3,5 +3,5 @@ FROM ${COMPOSE_PROJECT_NAME}_src
 
 FROM ${COMPOSE_PROJECT_NAME}_web
 WORKDIR /var/www
-COPY --from=0 /php/ ./
+COPY --from=0 /app/ ./
 RUN chown -R nginx:nginx .

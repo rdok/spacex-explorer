@@ -2,19 +2,13 @@
 
 namespace Tests\Functional;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\BrowserKitTesting\TestCase as BaseTestCase;
 use Tests\CreatesApplication;
 
 abstract class FunctionalTestCase extends BaseTestCase
 {
-    use CreatesApplication;
+    use CreatesApplication, DatabaseTransactions;
 
     public $baseUrl = 'http://localhost';
-
-    public function setUp(): void
-    {
-        parent::setUp();;
-
-        config(['database.default' => 'none']);
-    }
 }

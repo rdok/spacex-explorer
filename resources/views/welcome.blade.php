@@ -46,7 +46,20 @@
             font-size: 84px;
         }
 
+        .links {
+            margin-bottom: 2em;
+        }
         .links > a {
+            color: #636b6f;
+            padding: 0 25px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .1rem;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .links-thread > div > a {
             color: #636b6f;
             padding: 0 25px;
             font-size: 13px;
@@ -82,6 +95,14 @@
 
         <div class="links">
             <a href="{!! url('threads') !!}">Threads</a>
+        </div>
+        <div class="links-thread">
+            @foreach($threads as $thread)
+                <div>
+                    <a href="{{ $thread->url() }}">{{ $thread->title }}</a>
+                </div>
+            @endforeach
+
         </div>
     </div>
 </div>

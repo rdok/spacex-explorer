@@ -3,7 +3,7 @@
 
 @section('content')
 
-    <form action="{{ route('threads.store') }}" method="POST" >
+    <form action="{{ route('threads.store') }}" method="POST">
 
         {{ csrf_field() }}
 

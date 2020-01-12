@@ -11,10 +11,14 @@ docker_compose_dev() {
     "$@"
 }
 
+dp() { # docker php
+  docker_compose_dev exec php "$@"
+}
+
 dpt() { # docker phpunit
   docker_compose_dev exec php ./vendor/bin/phpunit "$@"
 }
 
-dpa() { # docker php artisan
+da() { # docker php artisan
   docker_compose_dev exec php php artisan "$@"
 }

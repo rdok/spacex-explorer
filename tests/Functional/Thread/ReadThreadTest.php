@@ -12,7 +12,7 @@ class ReadThreadTest extends FunctionalTestCase
     /** @test */
     public function should_index_threads()
     {
-        $threads = factory(Thread::class, 2)->create();
+        $threads = create(Thread::class, 2);
 
         $this->visit('threads')
             ->seeInElement('div.card-header.bg-white', 'Threads');
@@ -32,7 +32,7 @@ class ReadThreadTest extends FunctionalTestCase
     public function should_read_a_thread()
     {
         /** @var Thread $thread */
-        $thread = factory(Thread::class)->create();
+        $thread = create(Thread::class);
 
         $this->visit($thread->url())
             ->seeInElement('div.card-header.bg-white', $thread->title)
@@ -43,9 +43,8 @@ class ReadThreadTest extends FunctionalTestCase
     public function should_read_thread_replies()
     {
         /** @var Thread $thread */
-        $thread = factory(Thread::class)->create();
-        $replies = factory(Reply::class, 2)
-            ->create(['thread_id' => $thread->id]);
+        $thread = create(Thread::class);
+        $replies = create(Reply::class, 2, ['thread_id' => $thread->id]);
 
         $this->visit($thread->url());
 

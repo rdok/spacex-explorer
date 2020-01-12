@@ -13,8 +13,8 @@ services:
       - APP_KEY
       - APP_URL="https://${VIRTUAL_HOST}"
     command: sh -c "
-        /wait-for db:3306
-        && php-fpm
+      /wait-for db:3306
+      && php-fpm
       "
 
   web:

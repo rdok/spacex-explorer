@@ -12,7 +12,7 @@ class WelcomeTest extends FunctionalTestCase
     public function should_index_threads()
     {
         /** @var Collection $threads */
-        $threads = factory(Thread::class, 2)->create();
+        $threads = create(Thread::class, 2);
 
         $this->visit('/')
             ->seeInElement('title', 'SpaceX Explorer')

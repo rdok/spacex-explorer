@@ -15,7 +15,7 @@ abstract class FunctionalTestCase extends BaseTestCase
 
     protected function actingAsUser()
     {
-        $user = factory(User::class)->create();
+        $user = create(User::class);
 
         return $this->actingAs($user);
     }

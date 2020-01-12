@@ -3,16 +3,15 @@
 namespace Tests\Unit;
 
 use App\Thread;
-use App\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ThreadTest extends UnitTestCase
 {
-    /** @var Thread  */
+    /** @var Thread */
     private $thread;
 
-    public function setUp():void
+    public function setUp(): void
     {
         parent::setUp();;
 

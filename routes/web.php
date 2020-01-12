@@ -1,7 +1,7 @@
 <?php
 
 Route::get('/', function () {
-    $threads = \App\Thread::query()->paginate(3);
+    $threads = \App\Thread::query()->orderBy('updated_at')->paginate(3);
 
     return view('welcome', compact('threads'));
 });

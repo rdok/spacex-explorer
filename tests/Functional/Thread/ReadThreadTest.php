@@ -7,7 +7,7 @@ use App\Thread;
 use Carbon\Carbon;
 use Tests\Functional\FunctionalTestCase;
 
-class ThreadTest extends FunctionalTestCase
+class ReadThreadTest extends FunctionalTestCase
 {
     /** @test */
     public function should_index_threads()

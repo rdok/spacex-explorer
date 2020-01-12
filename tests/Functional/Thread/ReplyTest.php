@@ -9,7 +9,7 @@ use Tests\Functional\FunctionalTestCase;
 class ReplyTest extends FunctionalTestCase
 {
     /** @test */
-    public function should_see_reply_form_errors()
+    public function should_validate_reply_form()
     {
         /** @var Thread $thread */
         $thread = factory(Thread::class)->create();
@@ -69,7 +69,7 @@ class ReplyTest extends FunctionalTestCase
     }
 
     /** @test */
-    public function should_require_login_for_participation()
+    public function should_require_login_submitting_a_reply_form()
     {
         $thread = new Thread;
         $thread->id = 2077;

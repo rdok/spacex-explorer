@@ -6,8 +6,9 @@ Route::get('/', function () {
     return view('welcome', compact('threads'));
 });
 
-Route::get('threads', 'ThreadController@index');
-Route::get('threads/{thread}', 'ThreadController@show');
+Route::resource('threads', 'ThreadController')
+    ->except(['destroy', 'edit', 'update']);
+
 Route::post('threads/{thread}/replies', 'ReplyController@store')
     ->middleware('auth');
 

@@ -3,7 +3,16 @@
 @section('content')
 
     <div class="card mb-3">
-        <div class="card-header bg-white">Threads</div>
+        <div class="card-header bg-white">
+            Threads
+            <a
+                href="{{ url('threads/create') }}"
+                type="button"
+                class="btn btn-outline-primary float-right"
+            >
+                Create
+            </a>
+        </div>
     </div>
 
     @foreach($threads as $thread)

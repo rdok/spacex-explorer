@@ -80,7 +80,7 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8">
-                    @include('layouts._error')
+                    @include('layouts._flash')
                     @yield('content')
                 </div>
             </div>

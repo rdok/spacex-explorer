@@ -11,6 +11,8 @@ class CreateThreadTest extends FunctionalTestCase
     {
         $this->actingAsUser()
             ->visit('threads/create')
+            ->seeInElement('div.card-header', 'New Thread')
+            ->seeInElement('div.card-header', 'New Thread')
             ->press('Create')
             ->seeInElement('div.alert.alert-danger', 'The title field is required.')
             ->seeInElement('div.alert.alert-danger', 'The body field is required.');

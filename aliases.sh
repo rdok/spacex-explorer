@@ -22,3 +22,11 @@ dpt() { # docker phpunit
 da() { # docker php artisan
   docker_compose_dev exec php php artisan "$@"
 }
+
+dyarn() {
+  docker_compose_dev exec node yarn "$@"
+}
+
+ddb() {
+  docker_compose_dev exec db mysql -uroot -psecret
+}

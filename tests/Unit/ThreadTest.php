@@ -13,7 +13,7 @@ class ThreadTest extends UnitTestCase
 
     public function setUp(): void
     {
-        parent::setUp();;
+        parent::setUp();
 
         $this->thread = new Thread;
     }
@@ -25,9 +25,15 @@ class ThreadTest extends UnitTestCase
     }
 
     /** @test */
-    function should_have_author()
+    function should_belong_to_author()
     {
         $this->assertInstanceOf(BelongsTo::class, $this->thread->author());
+    }
+
+    /** @test */
+    function should_belong_to_channel()
+    {
+        $this->assertInstanceOf(BelongsTo::class, $this->thread->channel());
     }
 
     /** @test */

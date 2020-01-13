@@ -9,12 +9,12 @@ class ThreadController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth')->only(['create', 'store']);
+        $this->middleware('auth')->except(['index', 'show']);
     }
 
     public function index()
     {
-        $threads = Thread::query()->orderBy('created_at')->paginate();
+        $threads = Thread::query()->orderBy('created_at', 'desc')->paginate();
 
         return view('threads.index', compact('threads'));
     }

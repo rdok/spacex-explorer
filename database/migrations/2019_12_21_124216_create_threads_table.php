@@ -6,11 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateThreadsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('threads', function (Blueprint $table) {
@@ -23,15 +18,11 @@ class CreateThreadsTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::table('threads', function (Blueprint $table) {
             $table->dropForeign('threads_author_id_foreign');
+            $table->dropColumn('author_id');
         });
 
         Schema::dropIfExists('threads');

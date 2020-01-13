@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Channel;
 use App\Http\Requests\Thread\StoreThreadRequest;
 use App\Thread;
 
@@ -38,8 +39,12 @@ class ThreadController extends Controller
         return redirect()->route('threads.show', compact('thread'));
     }
 
-    public function show(Thread $thread)
+    public function show(Channel $channel, Thread $thread)
     {
+        if ($thread->channel_id != $channel->id) {
+            return abort(404);
+        }
+
         return view('threads.show', compact('thread'));
     }
 }

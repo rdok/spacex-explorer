@@ -19,7 +19,7 @@ dpt() { # docker phpunit
   docker_compose_dev exec php ./vendor/bin/phpunit "$@"
 }
 
-da() { # docker php artisan
+dpa() { # docker php artisan
   docker_compose_dev exec php php artisan "$@"
 }
 

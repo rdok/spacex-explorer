@@ -25,7 +25,13 @@ class Thread extends Model
 
     public function url($path = null)
     {
-        $url = url('threads/' . $this->id);
+        $url = url('threads');
+
+        if ($this->channel) {
+            $url .= '/' . $this->channel->slug;
+        }
+
+        $url .= '/' . $this->id;
 
         return $path ? "$url/$path" : $url;
     }

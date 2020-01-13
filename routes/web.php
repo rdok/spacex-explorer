@@ -8,6 +8,7 @@ Route::get('/', function () {
     return view('welcome', compact('threads'));
 });
 
+Route::get('threads/{channel_slug}/{thread}', 'ThreadController@show');
 Route::resource('threads', 'ThreadController')
     ->except(['destroy', 'edit', 'update']);
 

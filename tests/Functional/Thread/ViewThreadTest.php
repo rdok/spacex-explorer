@@ -5,12 +5,14 @@ namespace Tests\Functional\Thread;
 use App\Reply;
 use App\Thread;
 use Carbon\Carbon;
+use Exception;
+use Laravel\BrowserKitTesting\HttpException;
 use Tests\Functional\FunctionalTestCase;
 
-class ReadThreadTest extends FunctionalTestCase
+class ViewThreadTest extends FunctionalTestCase
 {
     /** @test */
-    public function should_index_threads()
+    public function view_threads_index()
     {
         $threads = create(Thread::class, 2);
 
@@ -27,9 +29,29 @@ class ReadThreadTest extends FunctionalTestCase
         }
     }
 
+    /** @test */
+    public function does_not_view_threads_with_invalid_channel()
+    {
+        /** @var Thread $thread */
+        $thread = factory(Thread::class)->state('channel')->create();
+
+        $url = url('threads') . '/' . $thread->id;
+
+        try {
+            $this->visit($url);
+        } catch (Exception $e) {
+            $message = sprintf(
+                "A request to [%s] failed. Received status code [404].",
+                $url
+            );
+            $this->assertSame($message, $e->getMessage());
+        }
+
+        $this->assertInstanceOf(HttpException::class, $e);
+    }
 
     /** @test */
-    public function should_read_a_thread()
+    public function view_thread_without_a_channel()
     {
         /** @var Thread $thread */
         $thread = create(Thread::class);
@@ -40,7 +62,18 @@ class ReadThreadTest extends FunctionalTestCase
     }
 
     /** @test */
-    public function should_read_thread_replies()
+    public function view_thread_with_a_channel()
+    {
+        /** @var Thread $thread */
+        $thread = factory(Thread::class)->state('channel')->create();
+
+        $this->visit($thread->url())
+            ->seeInElement('div.card-header.bg-white', $thread->title)
+            ->seeInElement('p.card-text', $thread->body);
+    }
+
+    /** @test */
+    public function view_thread_replies()
     {
         /** @var Thread $thread */
         $thread = create(Thread::class);

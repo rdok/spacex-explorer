@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Channel;
 use App\Thread;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -42,5 +43,15 @@ class ThreadTest extends UnitTestCase
         $this->thread->id = 2077;
 
         $this->assertSame(url('threads/2077'), $this->thread->url());
+    }
+
+    /** @test */
+    public function may_have_url_with_channel_slug()
+    {
+        $this->thread->id = 2077;
+        $this->thread->channel = new Channel(['slug' => 'tech']);
+        $expected = url('threads/tech/2077');
+
+        $this->assertSame($expected, $this->thread->url());
     }
 }

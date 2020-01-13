@@ -12,8 +12,8 @@ class ReplyTest extends FunctionalTestCase
     public function should_validate_reply_form()
     {
         /** @var Thread $thread */
-        $thread = factory(Thread::class)->create();
-        $user = factory(User::class)->create();
+        $thread = create(Thread::class);
+        $user = create(User::class);
 
         $this->actingAs($user)
             ->visit($thread->url())
@@ -26,8 +26,8 @@ class ReplyTest extends FunctionalTestCase
     public function should_reply_via_the_form()
     {
         /** @var Thread $thread */
-        $thread = factory(Thread::class)->create();
-        $user = factory(User::class)->create();
+        $thread = create(Thread::class);
+        $user = create(User::class);
         $expected = ['body' => 'reply-value'];
 
         $this->dontSeeInDatabase('replies', $expected);
@@ -51,9 +51,9 @@ class ReplyTest extends FunctionalTestCase
     public function should_not_show_reply_form_to_guests()
     {
         /** @var Thread $thread */
-        $thread = factory(Thread::class)->create();
+        $thread = create(Thread::class);
+        $user = create(User::class);
         $replyFormElement = 'input[name=body]';
-        $user = factory(User::class)->create();
 
         $this->visit($thread->url())
             ->dontSeeElement($replyFormElement)

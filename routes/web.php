@@ -1,11 +1,14 @@
 <?php
 
+use App\Thread;
+
 Route::get('/', function () {
-    $threads = \App\Thread::query()->paginate(3);
+    $threads = Thread::query()->orderBy('updated_at', 'desc')->paginate(3);
 
     return view('welcome', compact('threads'));
 });
 
+Route::get('threads/{channel_slug}/{thread}', 'ThreadController@show');
 Route::resource('threads', 'ThreadController')
     ->except(['destroy', 'edit', 'update']);
 

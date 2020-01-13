@@ -11,10 +11,22 @@ docker_compose_dev() {
     "$@"
 }
 
+dp() { # docker php
+  docker_compose_dev exec php "$@"
+}
+
 dpt() { # docker phpunit
   docker_compose_dev exec php ./vendor/bin/phpunit "$@"
 }
 
 dpa() { # docker php artisan
   docker_compose_dev exec php php artisan "$@"
+}
+
+dyarn() {
+  docker_compose_dev exec node yarn "$@"
+}
+
+ddb() {
+  docker_compose_dev exec db mysql -uroot -psecret
 }

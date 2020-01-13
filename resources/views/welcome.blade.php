@@ -49,6 +49,7 @@
         .links {
             margin-bottom: 2em;
         }
+
         .links > a {
             color: #636b6f;
             padding: 0 25px;

@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reply extends Model
 {
-   protected $fillable = ['body'];
+    protected $fillable = ['body'];
 
-   function author() 
-   {
-      return $this->belongsTo(User::class);
-   }
+    function author()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-   function thread() 
-   {
-      return $this->belongsTo(Thread::class);
-   }
+    function thread()
+    {
+        return $this->belongsTo(Thread::class);
+    }
 }

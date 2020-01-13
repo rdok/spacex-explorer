@@ -2,9 +2,10 @@
 
 namespace Tests\Integration;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
-abstract class IntegrationTestCase extends TestCase {
-   use DatabaseTransactions;
+abstract class IntegrationTestCase extends TestCase
+{
+    use DatabaseTransactions;
 }

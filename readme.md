@@ -17,6 +17,7 @@ docker_compose_dev exec php php artisan migrate
 docker_compose_dev exec php php artisan db:seed
 
 docker_compose_dev exec node yarn install
+docker_compose_dev exec node yarn upgrade
 docker_compose_dev exec node yarn run dev
 
 # visit http://localhost:3000
